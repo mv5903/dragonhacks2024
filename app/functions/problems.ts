@@ -4,16 +4,15 @@ abstract class Problem {
     ID: string;
     isSolved: boolean;
     Problem (solution: number, values: number[]) {
-        this.solution = solution;
-        this.values = values;
-        this.ID = this.generateRandomKey(10);
-        this.isSolved = false;
     }
 
     // abstract getSolution for various types of math problems
     abstract getSolution(): number;
 
     // gets problem ID
+    getProblemID (): string {
+        return this.ID;
+    }
     
     // Checks to see whether user's answer is correct
     isCorrect(userSolution: number): boolean {
@@ -38,12 +37,15 @@ abstract class Problem {
     }
  }
 
+ // Addition problems that include entering values
  class Addition extends Problem {
 
- Addition (solution: number, values: number[], ID: string) {
-           this.solution = solution;
-        this
-    }
+    Addition (solution: number, values: number[]) {
+        this.solution = solution;
+        this.values = values;
+        this.ID = this.generateRandomKey(10);
+        this.isSolved = false;
+        }
 
     getSolution(): number {
         var sum = 0;
@@ -56,6 +58,10 @@ abstract class Problem {
 
  class Multiplication extends Problem {
 
+    Multiplication (solution: number, values: number[]) {
+    }
+
+
     getSolution(): number {
         var product = 1;
 
@@ -65,3 +71,27 @@ abstract class Problem {
         return product;
     }
  }
+
+ class MultiplicationEasy extends Multiplication {
+
+    problemText: string;
+
+    MultiplicationEasy (solution: number, values: number[]) {
+        this.solution = solution;
+        this.values = values;
+        this.ID = this.generateRandomKey(10);
+        this.isSolved = false;
+
+    }
+
+    getSolution(): number {
+        var product = 1;
+
+        for (let i = 0; i < this.values.length; i++) {
+            product *= this.values[i];
+        }
+        return product;
+    }
+ }
+
+ class MultiplicationHard extends Multiplication {}
