@@ -3,8 +3,11 @@ abstract class Problem {
     solution: number;
     ID: string;
     isSolved: boolean;
-    Problem (solution: number) {
+    Problem (solution: number, values: number[]) {
         this.solution = solution;
+        this.values = values;
+        this.ID = this.generateRandomKey(10);
+        this.isSolved = false;
     }
 
     // abstract getSolution for various types of math problems
@@ -25,9 +28,13 @@ abstract class Problem {
 
     // creates a random key to use as the problem  ID
 
-    generateRandomKey(): string {
+    generateRandomKey(length: number): string {
         let result = '';
-        const characters = ""
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        for (let i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+        return result;
     }
  }
 
