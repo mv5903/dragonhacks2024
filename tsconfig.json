@@ -27,7 +27,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-, "app/layout.jsx"  ],
+, "app/layout.jsx", "components/layout/Navbar.jsx"  ],
   "exclude": [
     "node_modules"
   ]

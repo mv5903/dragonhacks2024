@@ -1,17 +1,25 @@
-abstract class Problem {
-    values: number[];
+
+export abstract class Problem {
     solution: number;
     ID: string;
     isSolved: boolean;
-    Problem (solution: number, values: number[]) {
+    problemText: string;
+    Problem (solution: number, problemText: string) {
     }
 
     // abstract getSolution for various types of math problems
-    abstract getSolution(): number;
+    getSolution(): number {
+        return this.solution;
+    };
 
     // gets problem ID
     getProblemID (): string {
         return this.ID;
+    }
+
+    // get if the problem is solved 
+    getIfSolved (): boolean {
+        return this.isSolved;
     }
     
     // Checks to see whether user's answer is correct
@@ -35,63 +43,83 @@ abstract class Problem {
         }
         return result;
     }
+
+    getProblemText(): String {
+        return this.problemText;
+    }
  }
 
  // Addition problems that include entering values
- class Addition extends Problem {
+ export abstract class Addition extends Problem {
 
-    Addition (solution: number, values: number[]) {
+    Addition (solution: number, problemText: string) {
+
+        }
+
+ }
+
+ export class AdditionEasy extends Addition {
+    a: number;
+    b: number;
+
+    AdditionEasy (solution: number, problemText: string) {
         this.solution = solution;
-        this.values = values;
         this.ID = this.generateRandomKey(10);
         this.isSolved = false;
-        }
-
-    getSolution(): number {
-        var sum = 0;
-        for (let i = 0; i < this.values.length; i++) {
-            sum += this.values[i];
-        }
-        return sum;
+        this.problemText = problemText;
     }
+
  }
 
- class Multiplication extends Problem {
+ export class AdditionHard extends Addition {
 
-    Multiplication (solution: number, values: number[]) {
-    }
+    values: number[];
 
-
-    getSolution(): number {
-        var product = 1;
-
-        for (let i = 0; i < this.values.length; i++) {
-            product *= this.values[i];
-        }
-        return product;
-    }
- }
-
- class MultiplicationEasy extends Multiplication {
-
-    problemText: string;
-
-    MultiplicationEasy (solution: number, values: number[]) {
+    AdditionHard (solution: number, problemText: string, values: number[]) {
         this.solution = solution;
-        this.values = values;
         this.ID = this.generateRandomKey(10);
         this.isSolved = false;
-
-    }
-
-    getSolution(): number {
-        var product = 1;
-
-        for (let i = 0; i < this.values.length; i++) {
-            product *= this.values[i];
-        }
-        return product;
+        this.problemText = problemText;
+        this.values = values;
     }
  }
 
- class MultiplicationHard extends Multiplication {}
+ export abstract class Multiplication extends Problem {
+
+    Multiplication (solution: number) {
+    }
+
+ }
+
+ export class MultiplicationEasy extends Multiplication {
+    
+
+    MultiplicationEasy (solution: number, problemText: string) {
+        this.solution = solution;
+        this.ID = this.generateRandomKey(10);
+        this.isSolved = false;
+        this.problemText = problemText;
+
+    }
+ }
+
+ export class MultiplicationHard extends Multiplication {
+
+    values: number[]
+
+    MultiplicationHard (solution: number, problemText: string, values: number[]) {
+        this.solution = solution;
+        this.ID = this.generateRandomKey(10);
+        this.isSolved = false;
+        this.problemText = problemText;
+        this.values = values;
+
+    }
+
+ }
+
+ export class WordProblem extends Problem {
+    operation: string;
+    x: number;
+    y: number;
+ }
