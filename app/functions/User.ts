@@ -1,4 +1,5 @@
 import { SubjectTree } from "../shared/SubjectTree";
+import { getDB } from "../database/Database";
 
 export default class User {
     subjects = Object.keys(SubjectTree);
@@ -12,34 +13,18 @@ export default class User {
     }
     
     static async getUser(id: string): Promise<any> {
-        const { MongoClient } = require('mongodb');
-        
-        const client = new MongoClient(process.env.MONGODB_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-    
-        try {
-            await client.connect();
-            const db = client.db('Mathathon');
-            const users = db.collection('Users');
-    
-            // Convert the findOne with callback to a promise using await
-            const result = await users.findOne({ id });
-            if (result === null) {
-                // If the user does not exist, create a new user
-                let newUser = new User(id);
-                await users.insertOne({ id, completedProbs: JSON.stringify(newUser.getCompletedProbs()) });
-                return { id, completedProbs: newUser.getCompletedProbs() };
-            }
-            return { id: result.id, completedProbs: JSON.parse(result.completedProbs) };  // Return the result directly
-        } catch (err) {
-            console.error('An error occurred:', err);
-            throw err;  // Re-throw the error to handle it in the calling function
-        } finally {
-            // Ensures that the client will close when you finish/error
-            await client.close();
+        const db = await getDB();
+        const users = db.collection('Users');
+
+        // Convert the findOne with callback to a promise using await
+        const result = await users.findOne({ id });
+        if (result === null) {
+            // If the user does not exist, create a new user
+            let newUser = new User(id);
+            await users.insertOne({ id, completedProbs: JSON.stringify(newUser.getCompletedProbs()) });
+            return { id, completedProbs: newUser.getCompletedProbs() };
         }
+        return { id: result.id, completedProbs: JSON.parse(result.completedProbs) };  // Return the result directly
     }
 
     getID(): string {
@@ -84,33 +69,20 @@ export default class User {
 
     // increases the amount of problems completed under a subject by 1 when a problem is done
     static async incrementUser(id: string, subject:string): Promise <any> {
-        const { MongoClient } = require('mongodb');
-        const client = new MongoClient(process.env.MONGODB_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
+        const db = await getDB();
+        const users = db.collection('Users');
 
-        try {
-            await client.connect();
-            const db = client.db('Mathathon');
-            const users = db.collection('Users');
-    
-            // Convert the findOne with callback to a promise using await
-            const result = await users.findOne({ id });
-            var newUser = new User(id);
-            newUser.setCompletedProbs(JSON.parse(result.completedProbs))
-            newUser.completedProbs[subject] += 1;
-            users.updateMany({id: id}, {$set: {completedProbs: JSON.stringify(newUser.completedProbs)}})
-            return {success: "Succesfully incremented"}
-            
-        } catch (err) {
-            console.error('An error occurred:', err);
-            throw err;  // Re-throw the error to handle it in the calling function
-        } finally {
-            // Ensures that the client will close when you finish/error
-            await client.close();
+        // Convert the findOne with callback to a promise using await
+        const result = await users.findOne({ id });
+
+        if (result === null) {
+            throw new Error('User does not exist');
         }
-        
+        var newUser = new User(id);
+        newUser.setCompletedProbs(JSON.parse(result.completedProbs))
+        newUser.completedProbs[subject] += 1;
+        users.updateMany({ id : id }, { $set : { completedProbs: JSON.stringify(newUser.completedProbs) }})
+        return {success: "Succesfully incremented"}
     }
 
 } 

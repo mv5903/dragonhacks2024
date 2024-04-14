@@ -1,7 +1,7 @@
 'use client';
 import './globals.css';
 import Footer from '../components/layout/Footer';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { UserProvider } from '@auth0/nextjs-auth0/client';
 import Navbar from '../components/layout/Navbar';
 import Body from '../components/layout/Body';

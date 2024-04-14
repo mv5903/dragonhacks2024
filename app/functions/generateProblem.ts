@@ -1,5 +1,4 @@
-import Problem from './problems'     
-import OpenAI from "openai";    
+  import OpenAI from "openai";    
 const apiKey = process.env.OPENAI_API_KEY;
 const url = "https://chat.openai.com/g/g-hsnfatwFT-mathgeniuspro";
 

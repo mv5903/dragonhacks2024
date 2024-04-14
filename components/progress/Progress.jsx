@@ -29,9 +29,14 @@ export default function Progress({ subjectType, roadmap }) {
     const [userRoadmap, setUserRoadmap] = useState(null);
 
     async function getProblem() {
+        setActiveProblem(null);
         const response = await fetch('/api/problems?subject=' + subjectType);
         if (response.ok) {
             const data = await response.json();
+            if (data.problem === undefined) {
+                getProblem();
+                return;
+            }
             setActiveProblem(data);
         } else {
             alert("Failed to fetch problem!");
@@ -48,24 +53,18 @@ export default function Progress({ subjectType, roadmap }) {
         }
     }
 
-
-    useEffect(() => {
-        if (user) {
-            getProblem();
-        }
-    }, [user, subjectType, roadmap]);
-
-    useEffect(() => {
-        if (user) {
-            getUserProgress();
-        }
-    }, [user]);
-
     function submitAnswer() {
         if (curAnswer == activeProblem.solution) {
             setShowCorrect(true);
-            fetch(`/api/problems?id=${user.sub}&subject=${subjectType}`, {
+            fetch(`/api/problems`, {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: user.sub,
+                    subject: subjectType
+                })
             })
             setTimeout(() => {
                 setShowCorrect(false);
@@ -85,7 +84,10 @@ export default function Progress({ subjectType, roadmap }) {
     if (!activeProblem) {
         return (
             <div className="h-full overflow-hidden flex justify-center mt-[20%]">
-                <Loading />
+                <div className='flex flex-col gap-10 justify-center place-items-center'>
+                    <h2>Generating next problem...</h2>
+                    <Loading />
+                </div>
             </div>
         );
     }

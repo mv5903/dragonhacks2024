@@ -1,3 +1,4 @@
+import { getDB } from '../database/Database';
 
 export default class Problem {
     solution: number;
@@ -5,8 +6,8 @@ export default class Problem {
     type: string;
     isSolved: boolean;
     problemText: string;
-    constructor(solution: number, problemText: string, type: string) {
-    }
+
+    constructor(solution: number, problemText: string, type: string) {}
 
     // abstract getSolution for various types of math problems
     getSolution(): number {
@@ -54,36 +55,22 @@ export default class Problem {
     }
 
     static async getProblem(type: string): Promise<any> {
-        const { MongoClient } = require('mongodb');
-        const client = new MongoClient(process.env.MONGODB_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-        try {
-            await client.connect();
-            const db = client.db('Mathathon');
-            const problems = db.collection('Problems');
-    
-            // Convert the findOne with callback to a promise using await
-            const result = await problems.find( { type } ).toArray();
-            if (result.length == 0) {
-                throw new Error('No problems of this type exist');
-            }
-            else if (result.length == 1) {
-                return { text: result[0].problemText, solution: result[0].solution};  // Return the result directly
-            }
-            else {
-                const randomIndex = Math.floor(Math.random() * result.length);
-                const randQuestion = result[randomIndex];
-                return { text: randQuestion.problemText, solution: randQuestion.solution};
+        const db = await getDB();
+        const problems = db.collection('Problems');
 
-            }
-        } catch (err) {
-            console.error('An error occurred:', err);
-            throw err;  // Re-throw the error to handle it in the calling function
-        } finally {
-            // Ensures that the client will close when you finish/error
-            await client.close();
+        // Convert the findOne with callback to a promise using await
+        const result = await problems.find( { type } ).toArray();
+        if (result.length == 0) {
+            throw new Error('No problems of this type exist');
+        }
+        else if (result.length == 1) {
+            return { text: result[0].problemText, solution: result[0].solution};  // Return the result directly
+        }
+        else {
+            const randomIndex = Math.floor(Math.random() * result.length);
+            const randQuestion = result[randomIndex];
+            return { text: randQuestion.problemText, solution: randQuestion.solution};
+
         }
      }
  }
