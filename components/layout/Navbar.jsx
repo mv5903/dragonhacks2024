@@ -10,11 +10,14 @@ export default function Navbar({setTab}) {
           <div>
             <a className="btn btn-ghost text-xl">Mathathon</a>
           </div>
-          <div className="text-center ms-[9%]">
-            <ul className="menu menu-horizontal px-1">
-              <li><a onClick={() => setTab('roadmap')}>Roadmap</a></li>
-              <li><a onClick={() => setTab('progress')}>Progress</a></li>
-            </ul>
+          <div className={`text-center ${user ? 'ms-[9%]' : ''}`}>
+            {
+              user &&
+              <ul className="menu menu-horizontal px-1">
+                <li><a onClick={() => setTab('roadmap')}>Roadmap</a></li>
+                <li><a onClick={() => setTab('progress')}>Progress</a></li>
+              </ul>
+            }
           </div>
           <div>
             {

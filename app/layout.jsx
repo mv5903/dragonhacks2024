@@ -1,19 +1,22 @@
 'use client';
-
 import './globals.css';
 import Footer from '../components/layout/Footer';
 import React, { useState } from 'react';
-import Progress from '../components/progress/Progress';
-import Roadmap from '../components/roadmap/Roadmap';
 import { UserProvider } from '@auth0/nextjs-auth0/client';
 import Navbar from '../components/layout/Navbar';
+import Body from '../components/layout/Body';
 
 export default function RootLayout({ children }) {
-
   const [tab, setTab] = useState('roadmap');
+  const [subject, setSubject] = useState('addition');
 
   function updateTab(newTab) {
     setTab(newTab);
+  }
+
+  function updateSubject(newSubject) {
+    setSubject(newSubject);
+    setTab('progress');
   }
 
   return (
@@ -21,19 +24,11 @@ export default function RootLayout({ children }) {
       <head>
         <title>Mathathon</title>
       </head>
-      <body className="min-h-full">
+      <body>
         <UserProvider>
-          <main id="app" className='flex flex-col h-full'>
-            <Navbar setTab={updateTab} />
-            <div className='flex-grow'>
-              {
-                tab === 'roadmap'
-                ?
-                <Roadmap />
-                :
-                <Progress />
-              }
-            </div>
+          <main id="app" className='flex-1'>
+            <Navbar setTab={updateTab} /> 
+            <Body tab={tab} subject={subject} setSubject={updateSubject} /> 
             <Footer />
           </main>
         </UserProvider>

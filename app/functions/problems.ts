@@ -2,15 +2,20 @@
 export abstract class Problem {
     solution: number;
     ID: string;
+    type: string;
     isSolved: boolean;
     problemText: string;
-    Problem (solution: number, problemText: string) {
+    constructor(solution: number, problemText: string, type: string) {
     }
 
     // abstract getSolution for various types of math problems
     getSolution(): number {
         return this.solution;
     };
+
+    getType(): string {
+        return this.type;
+    }
 
     // gets problem ID
     getProblemID (): string {
@@ -47,79 +52,40 @@ export abstract class Problem {
     getProblemText(): String {
         return this.problemText;
     }
- }
 
- // Addition problems that include entering values
- export abstract class Addition extends Problem {
-
-    Addition (solution: number, problemText: string) {
-
-        }
-
- }
-
- export class AdditionEasy extends Addition {
-    a: number;
-    b: number;
-
-    AdditionEasy (solution: number, problemText: string) {
-        this.solution = solution;
-        this.ID = this.generateRandomKey(10);
-        this.isSolved = false;
-        this.problemText = problemText;
-    }
-
- }
-
- export class AdditionHard extends Addition {
-
-    values: number[];
-
-    AdditionHard (solution: number, problemText: string, values: number[]) {
-        this.solution = solution;
-        this.ID = this.generateRandomKey(10);
-        this.isSolved = false;
-        this.problemText = problemText;
-        this.values = values;
-    }
- }
-
- export abstract class Multiplication extends Problem {
-
-    Multiplication (solution: number) {
-    }
-
- }
-
- export class MultiplicationEasy extends Multiplication {
+    static async getProblem(type: string): Promise<any> {
+        const { MongoClient } = require('mongodb');
+        const client = new MongoClient(process.env.MONGODB_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        try {
+            await client.connect();
+            const db = client.db('Mathathon');
+            const users = db.collection('Problems');
     
+            // Convert the findOne with callback to a promise using await
+            const result = await users.find({type});
+            if (result.length == 0) {
+                throw new Error('No problems of this type exist');
+            }
+            else if (result.length == 1) {
+                return { text: result.problemText, soln: result.solution};  // Return the result directly
+            }
+            else {
+                const randomIndex = Math.floor(Math.random() * result.length);
+                const randQuestion = result[randomIndex];
+                return {text: randQuestion.problemText, soln: randQuestion.solution};
 
-    MultiplicationEasy (solution: number, problemText: string) {
-        this.solution = solution;
-        this.ID = this.generateRandomKey(10);
-        this.isSolved = false;
-        this.problemText = problemText;
-
-    }
+            }
+        } catch (err) {
+            console.error('An error occurred:', err);
+            throw err;  // Re-throw the error to handle it in the calling function
+        } finally {
+            // Ensures that the client will close when you finish/error
+            await client.close();
+        }
+     }
  }
 
- export class MultiplicationHard extends Multiplication {
 
-    values: number[]
-
-    MultiplicationHard (solution: number, problemText: string, values: number[]) {
-        this.solution = solution;
-        this.ID = this.generateRandomKey(10);
-        this.isSolved = false;
-        this.problemText = problemText;
-        this.values = values;
-
-    }
-
- }
-
- export class WordProblem extends Problem {
-    operation: string;
-    x: number;
-    y: number;
- }

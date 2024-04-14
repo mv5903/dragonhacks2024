@@ -1,7 +1,7 @@
-export default function Progress() {
+export default function Progress({ subjectType }) {
     return (
-        <div className="h-[85vh]">
-            <p className="ms-[200px]">Progress</p>
+        <div className="h-full overflow-hidden">
+            <h2 className="text-center text-2xl">{subjectType}</h2>
         </div>
     )
 }
