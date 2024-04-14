@@ -22,7 +22,7 @@ function TreeLevel({ level, setSubject, roadmap }) {
 
     return (
         <div className="flex gap-2 justify-center mb-2">
-            { level.map(node => {
+            { level.map((node, idx) => {
                 let parentNode = SubjectTree[node.name];
 
                 let parentCompleted = true;
@@ -37,14 +37,14 @@ function TreeLevel({ level, setSubject, roadmap }) {
 
                 if (!parentCompleted) {
                     return (
-                        <div className="tooltip" data-tip={`Answer at least ${QUESTION_COUNT} questions of each above category correctly to unlock this!`}>
+                        <div key={idx} className="tooltip" data-tip={`Answer at least ${QUESTION_COUNT} questions of each above category correctly to unlock this!`}>
                             <Button label={getFriendlyName(node.name)} className={`btn-disabled`} /> 
                         </div>
                     );
                 }
 
                 return (
-                    <div onClick={() =>  setSubject(node.name)} className="tooltip tooltip-left" data-tip={`${roadmap[node.name]}/${QUESTION_COUNT} correct answers!`}>
+                    <div key={idx} onClick={() =>  setSubject(node.name)} className="tooltip tooltip-left" data-tip={`${roadmap[node.name]}/${QUESTION_COUNT} correct answers!`}>
                         <Button label={getFriendlyName(node.name)} className={`btn-accent`} /> 
                     </div>
                 );

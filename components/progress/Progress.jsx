@@ -44,11 +44,10 @@ export default function Progress({ subjectType, roadmap }) {
                 let end = data.problem.indexOf("$", start + 1);
                 let latex = data.problem.substring(start + 1, end);
                 data.problem = data.problem = `$${latex}$`;
-
             }
+            // Remove the "Simplify" from the problem if it exists
             data.problem = data.problem.replaceAll("Simplify", "");
-            // Make all occurences of single backslash into double backslash, but only if it's not a double backslash already
-            data.problem = data.problem.replaceAll("\\", "\\\\");
+
             console.log(data);
             setActiveProblem(data);
         } else {
