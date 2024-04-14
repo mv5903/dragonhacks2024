@@ -4,6 +4,8 @@ import Button from "../misc/Button";
 import { useUser } from '@auth0/nextjs-auth0/client';
 import Loading from "../Loading";
 
+const QUESTION_COUNT = 10;
+
 function TreeLevel({ level, setSubject, roadmap }) {
 
     function getFriendlyName(name) {
@@ -18,8 +20,6 @@ function TreeLevel({ level, setSubject, roadmap }) {
         return name.charAt(0).toUpperCase() + name.slice(1);
     }
 
-    console.log(level);
-
     return (
         <div className="flex gap-2 justify-center mb-2">
             { level.map(node => {
@@ -28,7 +28,7 @@ function TreeLevel({ level, setSubject, roadmap }) {
                 let parentCompleted = true;
                 if (parentNode) {
                     for (let pNode of parentNode) {
-                        if (roadmap[pNode] < 10) {
+                        if (roadmap[pNode] < QUESTION_COUNT) {
                             parentCompleted = false;
                             break;
                         }
@@ -37,14 +37,14 @@ function TreeLevel({ level, setSubject, roadmap }) {
 
                 if (!parentCompleted) {
                     return (
-                        <div>
+                        <div className="tooltip" data-tip={`Answer at least ${QUESTION_COUNT} questions of each above category correctly to unlock this!`}>
                             <Button label={getFriendlyName(node.name)} className={`btn-disabled`} /> 
                         </div>
                     );
                 }
 
                 return (
-                    <div onClick={() =>  setSubject(node.name)}>
+                    <div onClick={() =>  setSubject(node.name)} className="tooltip tooltip-left" data-tip={`${roadmap[node.name]}/${QUESTION_COUNT} correct answers!`}>
                         <Button label={getFriendlyName(node.name)} className={`btn-accent`} /> 
                     </div>
                 );
