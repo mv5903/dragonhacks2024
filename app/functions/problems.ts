@@ -1,5 +1,5 @@
 
-export abstract class Problem {
+export default class Problem {
     solution: number;
     ID: string;
     type: string;
@@ -62,20 +62,20 @@ export abstract class Problem {
         try {
             await client.connect();
             const db = client.db('Mathathon');
-            const users = db.collection('Problems');
+            const problems = db.collection('Problems');
     
             // Convert the findOne with callback to a promise using await
-            const result = await users.find({type});
+            const result = await problems.find( { type } ).toArray();
             if (result.length == 0) {
                 throw new Error('No problems of this type exist');
             }
             else if (result.length == 1) {
-                return { text: result.problemText, soln: result.solution};  // Return the result directly
+                return { text: result[0].problemText, solution: result[0].solution};  // Return the result directly
             }
             else {
                 const randomIndex = Math.floor(Math.random() * result.length);
                 const randQuestion = result[randomIndex];
-                return {text: randQuestion.problemText, soln: randQuestion.solution};
+                return { text: randQuestion.problemText, solution: randQuestion.solution};
 
             }
         } catch (err) {

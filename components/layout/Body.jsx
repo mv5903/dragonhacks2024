@@ -16,7 +16,7 @@ export default function Body({ tab, subject, setSubject }) {
 
     return (
         <div className='flex-1 overflow-auto'>
-            { tab === 'roadmap' ? <Roadmap setSubject={setSubject} /> : <Progress subjectType={subject} /> }
+            { tab === 'roadmap' ? <Roadmap setSubject={setSubject} /> : <Progress subjectType={subject} tab={tab} /> }
         </div>
     )
 }
