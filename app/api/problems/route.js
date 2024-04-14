@@ -11,9 +11,9 @@ export async function GET(request) {
 
   const data = await generateProblem(type, "medium");
 
-  if (data.problem.includes("x")) {
-    data.problem = data.problem.replace("x", " \\times ");
-  }
+  // Fix problem and question so that \ are double \\
+  data.problem = encodeURIComponent(data.problem);
+  data.solution = encodeURIComponent(data.solution);
 
   return NextResponse.json(data, { status: 200 });
 }
@@ -25,8 +25,6 @@ export async function POST(request) {
 
     const id = body.id
     const subject = body.subject;
-
-    console.log(body);
 
     const data = await User.incrementUser(id, subject);
 

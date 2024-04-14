@@ -35,11 +35,24 @@ export default function Progress({ subjectType, roadmap }) {
             const data = await response.json();
             if (data.problem === undefined) {
                 getProblem();
-                return;
             }
+            data.problem = decodeURIComponent(data.problem);
+            data.solution = decodeURIComponent(data.solution);
+            if (data.problem.includes("$")) {
+                // Take the string and take the part only between the 2 $ signs
+                let start = data.problem.indexOf("$");
+                let end = data.problem.indexOf("$", start + 1);
+                let latex = data.problem.substring(start + 1, end);
+                data.problem = data.problem = `$${latex}$`;
+
+            }
+            data.problem = data.problem.replaceAll("Simplify", "");
+            // Make all occurences of single backslash into double backslash, but only if it's not a double backslash already
+            data.problem = data.problem.replaceAll("\\", "\\\\");
+            console.log(data);
             setActiveProblem(data);
         } else {
-            alert("Failed to fetch problem!");
+            getProblem();
         }
     }
 
@@ -52,6 +65,11 @@ export default function Progress({ subjectType, roadmap }) {
             alert("Failed to fetch user progress!");
         }
     }
+
+    useEffect(() => {
+        getProblem();
+        getUserProgress();
+    }, []);
 
     function submitAnswer() {
         if (curAnswer == activeProblem.solution) {
